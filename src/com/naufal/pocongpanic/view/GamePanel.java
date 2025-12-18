@@ -67,11 +67,11 @@ public class GamePanel extends JPanel implements ActionListener {
             public void mousePressed(MouseEvent e) {
                 if (!presenter.isGameOver()) {
                     // KLIK KANAN -> TEMBAK
-                    if (e.getButton() == MouseEvent.BUTTON3) {
+                    if (e.getButton() == MouseEvent.BUTTON1) {
                         presenter.shootPlayer();
                     }
                     // KLIK KIRI -> SKILL DASH
-                    if (e.getButton() == MouseEvent.BUTTON1) {
+                    if (e.getButton() == MouseEvent.BUTTON3) {
                         presenter.useHeroSkill();
                     }
                 }
