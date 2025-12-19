@@ -1,6 +1,4 @@
-package com.naufal.pocongpanic.model;
-
-import java.awt.Rectangle;
+package com.naufal.hideandseek.model;
 
 public class VisualEffect {
     public int x, y;

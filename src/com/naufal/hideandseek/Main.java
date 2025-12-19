@@ -1,6 +1,6 @@
-package com.naufal.pocongpanic;
+package com.naufal.hideandseek;
 
-import com.naufal.pocongpanic.view.GameWindow;
+import com.naufal.hideandseek.view.GameWindow;
 
 /**
  * Class Main

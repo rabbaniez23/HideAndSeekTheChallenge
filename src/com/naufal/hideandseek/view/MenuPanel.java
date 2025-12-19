@@ -1,6 +1,6 @@
-package com.naufal.pocongpanic.view;
+package com.naufal.hideandseek.view;
 
-import com.naufal.pocongpanic.model.DBConnection;
+import com.naufal.hideandseek.model.DBConnection;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -38,14 +38,14 @@ public class MenuPanel extends JPanel {
         } catch (Exception e) {}
 
         // JUDUL
-        JLabel titleShadow = new JLabel("RETRO FOREST HUNTER", SwingConstants.CENTER);
-        titleShadow.setFont(new Font("Monospaced", Font.BOLD, 42));
+        JLabel titleShadow = new JLabel("HIDE AND SEEK THE CHALLENGE", SwingConstants.CENTER);
+        titleShadow.setFont(new Font("Monospaced", Font.BOLD, 32));
         titleShadow.setForeground(new Color(0, 0, 0, 150));
         titleShadow.setBounds(104, 34, 600, 50);
         add(titleShadow);
 
-        JLabel titleLabel = new JLabel("RETRO FOREST HUNTER", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Monospaced", Font.BOLD, 42));
+        JLabel titleLabel = new JLabel("HIDE AND SEEK THE CHALLENGE", SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Monospaced", Font.BOLD, 32));
         titleLabel.setForeground(Color.WHITE);
         titleLabel.setBounds(100, 30, 600, 50);
         add(titleLabel);

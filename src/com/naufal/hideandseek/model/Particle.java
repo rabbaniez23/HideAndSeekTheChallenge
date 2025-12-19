@@ -1,4 +1,4 @@
-package com.naufal.pocongpanic.model;
+package com.naufal.hideandseek.model;
 
 import java.awt.Color;
 import java.awt.Graphics2D;

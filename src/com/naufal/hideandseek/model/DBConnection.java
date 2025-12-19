@@ -1,4 +1,4 @@
-package com.naufal.pocongpanic.model;
+package com.naufal.hideandseek.model;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

@@ -1,7 +1,7 @@
-package com.naufal.pocongpanic.presenter;
+package com.naufal.hideandseek.presenter;
 
-import com.naufal.pocongpanic.model.*;
-import com.naufal.pocongpanic.view.Sound;
+import com.naufal.hideandseek.model.*;
+import com.naufal.hideandseek.view.Sound;
 import java.awt.Rectangle;
 import java.awt.Color;
 import java.util.ArrayList;

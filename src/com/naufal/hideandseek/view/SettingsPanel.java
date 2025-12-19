@@ -1,6 +1,6 @@
-package com.naufal.pocongpanic.view;
+package com.naufal.hideandseek.view;
 
-import com.naufal.pocongpanic.model.GameSettings;
+import com.naufal.hideandseek.model.GameSettings;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;

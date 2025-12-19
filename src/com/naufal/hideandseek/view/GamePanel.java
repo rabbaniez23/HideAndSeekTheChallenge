@@ -1,7 +1,7 @@
-package com.naufal.pocongpanic.view;
+package com.naufal.hideandseek.view;
 
-import com.naufal.pocongpanic.model.*;
-import com.naufal.pocongpanic.presenter.GamePresenter;
+import com.naufal.hideandseek.model.*;
+import com.naufal.hideandseek.presenter.GamePresenter;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;

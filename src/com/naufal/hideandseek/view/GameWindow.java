@@ -1,6 +1,6 @@
-package com.naufal.pocongpanic.view;
+package com.naufal.hideandseek.view;
 
-import com.naufal.pocongpanic.model.GameSettings;
+import com.naufal.hideandseek.model.GameSettings;
 import javax.swing.*;
 
 public class GameWindow extends JFrame {
@@ -8,7 +8,7 @@ public class GameWindow extends JFrame {
     Sound music = new Sound();
 
     public GameWindow() {
-        this.setTitle("Retro Forest Hunter");
+        this.setTitle("Hide and Seek The Challenge");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setResizable(false);
         this.setSize(800, 600);
