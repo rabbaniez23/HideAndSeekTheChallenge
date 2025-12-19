@@ -20,6 +20,6 @@ public class Obstacle {
 
     // Fungsi untuk cek tabrakan nanti (Hitbox)
     public Rectangle getBounds() {
-        return new Rectangle(x, y, width, height);
+        return new Rectangle(x + 15, y + 20, width - 30, height - 30);
     }
 }

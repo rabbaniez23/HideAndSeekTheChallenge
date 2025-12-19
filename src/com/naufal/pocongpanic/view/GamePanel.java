@@ -117,7 +117,16 @@ public class GamePanel extends JPanel implements ActionListener {
         if (bgImage != null) g2.drawImage(bgImage, 0, 0, getWidth(), getHeight(), null);
         for (Obstacle obs : presenter.getObstacles()) {
             if (obstacleImage != null) g2.drawImage(obstacleImage, obs.getX(), obs.getY(), obs.getWidth(), obs.getHeight(), null);
+
+//            // --- DEBUG MODE: VISUALISASI HITBOX ---
+//            // Ini akan menggambar kotak merah sesuai area tabrakan yang d atur di Obstacle.java
+//            g2.setColor(Color.RED);
+//            Rectangle bounds = obs.getBounds(); // Mengambil ukuran hitbox yang sudah dipotong
+//            g2.drawRect(bounds.x, bounds.y, bounds.width, bounds.height);
+//            // --------------------------------------
         }
+
+
 
         // 2. Effects Layer Bawah (Ledakan di tanah)
         for (VisualEffect ve : effects) {
@@ -192,9 +201,9 @@ public class GamePanel extends JPanel implements ActionListener {
         String k3 = KeyEvent.getKeyText(GameSettings.KEY_SKILL_3).toUpperCase();
 
         // Posisi UI di Tengah Bawah
-        int startX = 480;
-        int skillY = 510;
-        int gap = 80;
+        int startX = 520;
+        int skillY = 490;
+        int gap = 100;
 
         drawSkillIcon(g2, k1, "BLAST", player.cdSkill1, startX, skillY, Color.RED, iconBlast);
         drawSkillIcon(g2, k2, "SHOTGUN", player.cdSkill2, startX + gap, skillY, Color.YELLOW, iconShotgun);

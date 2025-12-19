@@ -8,17 +8,13 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class GamePresenter {
-    // Models
     private Player player;
     private ArrayList<Enemy> enemies = new ArrayList<>();
     private ArrayList<Obstacle> obstacles = new ArrayList<>();
     private ArrayList<Bullet> bullets = new ArrayList<>();
     private ArrayList<Particle> particles = new ArrayList<>();
-
-    // BARU: List untuk Efek Visual (Ledakan/Animasi Skill)
     private ArrayList<VisualEffect> visualEffects = new ArrayList<>();
 
-    // Game Data
     private String username;
     private int difficultyLevel;
 
@@ -46,29 +42,43 @@ public class GamePresenter {
         bullets.clear();
         obstacles.clear();
         particles.clear();
-        visualEffects.clear(); // Reset efek
+        visualEffects.clear();
 
         isGameOver = false;
         scoreKill = 0;
         bulletsMissed = 0;
 
         Random rand = new Random();
-        int obstacleCount = 10 + rand.nextInt(6);
-        for (int i = 0; i < obstacleCount; i++) {
-            int ox = rand.nextInt(750);
-            int oy = rand.nextInt(550);
-            if (Math.abs(ox - 360) > 120 || Math.abs(oy - 260) > 120) {
+        int targetCount = 5 + rand.nextInt(3);
+        int attempts = 0;
+
+        while (obstacles.size() < targetCount && attempts < 1000) {
+            attempts++;
+            int ox = rand.nextInt(700) + 20;
+            int oy = rand.nextInt(500) + 20;
+
+            if (Math.abs(ox - 360) < 150 && Math.abs(oy - 260) < 150) continue;
+
+            boolean tooClose = false;
+            for (Obstacle existing : obstacles) {
+                double dist = Math.sqrt(Math.pow(ox - existing.getX(), 2) + Math.pow(oy - existing.getY(), 2));
+                if (dist < 150) {
+                    tooClose = true;
+                    break;
+                }
+            }
+
+            if (!tooClose) {
                 obstacles.add(new Obstacle(ox, oy, 80, 90));
-            } else { i--; }
+            }
         }
     }
 
     public void update() {
         if (isGameOver) return;
 
-        player.update();
+        player.update(obstacles);
 
-        // Spawn Logic
         int baseSpawn = 200 - (difficultyLevel * 10);
         int spawnRate = Math.max(50, baseSpawn - (scoreKill * 2));
         spawnTimer++;
@@ -78,17 +88,16 @@ public class GamePresenter {
             spawnTimer = 0;
         }
 
-        // Hitbox Player
         Rectangle playerHitbox = new Rectangle(player.getX()+20, player.getY()+20, PLAYER_SIZE-40, PLAYER_SIZE-40);
 
-        // Update Enemies
         for (int i = 0; i < enemies.size(); i++) {
             Enemy en = enemies.get(i);
-            en.update(player.getX(), player.getY());
+
+            // PERUBAHAN DI SINI: Kirim obstacles ke enemy
+            en.update(player.getX(), player.getY(), obstacles);
 
             if (en.readyToShoot()) shootEnemyBullet(en);
 
-            // Cek Tabrakan dengan Player
             if (en.getBounds().intersects(playerHitbox)) {
                 if (!player.isInvincible()) {
                     triggerGameOver();
@@ -96,7 +105,6 @@ public class GamePresenter {
             }
         }
 
-        // Update Bullets
         for (int i = 0; i < bullets.size(); i++) {
             Bullet b = bullets.get(i);
             b.update();
@@ -121,15 +129,13 @@ public class GamePresenter {
                         if (!player.isInvincible()) triggerGameOver();
                         else {
                             removeBullet = true;
-                            visualEffects.add(new VisualEffect(player.getX(), player.getY(), "HIT", 20)); // Efek tangkis
+                            visualEffects.add(new VisualEffect(player.getX(), player.getY(), "HIT", 20));
                         }
                     }
                 } else {
                     for (int j = 0; j < enemies.size(); j++) {
-                        Rectangle enemyHitbox = new Rectangle(enemies.get(j).getX(), enemies.get(j).getY(), ENEMY_SIZE, ENEMY_SIZE);
-                        if (b.getBounds().intersects(enemyHitbox)) {
+                        if (b.getBounds().intersects(enemies.get(j).getBounds())) {
                             soundEffect.playSE(2);
-                            // Efek Ledakan Kecil saat musuh mati
                             visualEffects.add(new VisualEffect(enemies.get(j).getX(), enemies.get(j).getY(), "HIT", 30));
                             spawnExplosionParticles(enemies.get(j).getX(), enemies.get(j).getY(), Color.ORANGE);
 
@@ -144,39 +150,32 @@ public class GamePresenter {
             if (removeBullet) { bullets.remove(i); i--; }
         }
 
-        // Update Particles
         for (int i = 0; i < particles.size(); i++) {
             if (particles.get(i).update()) { particles.remove(i); i--; }
         }
 
-        // BARU: Update Visual Effects
         for (int i = 0; i < visualEffects.size(); i++) {
             if (visualEffects.get(i).update()) { visualEffects.remove(i); i--; }
         }
     }
 
-    // --- PLAYER SKILLS & ACTIONS ---
-
-    // 1. Tembak Normal / Multishot
     public void shootPlayer() {
         if (player.getAmmo() > 0) {
             int px = player.getX() + PLAYER_SIZE/2;
             int py = player.getY() + PLAYER_SIZE/2;
-
             soundEffect.playSE(1);
             player.useAmmo();
 
             if (player.isMultishotActive()) {
                 double angleBase = 0;
-                if (player.direction == 0) angleBase = Math.PI / 2; // Bawah
-                else if (player.direction == 2) angleBase = -Math.PI / 2; // Atas
-                else if (player.facingLeft) angleBase = Math.PI; // Kiri
-                else angleBase = 0; // Kanan
+                if (player.direction == 0) angleBase = Math.PI / 2;
+                else if (player.direction == 2) angleBase = -Math.PI / 2;
+                else if (player.facingLeft) angleBase = Math.PI;
+                else angleBase = 0;
 
                 createAngledBullet(px, py, angleBase);
                 createAngledBullet(px, py, angleBase - 0.3);
                 createAngledBullet(px, py, angleBase + 0.3);
-
             } else {
                 int dir = player.direction;
                 if (player.facingLeft) dir = 3;
@@ -192,26 +191,20 @@ public class GamePresenter {
         bullets.add(new Bullet(x, y, vx, vy, false));
     }
 
-    // SKILL 1: BLAST (Area Damage)
     public void activateSkill1() {
         if (player.cdSkill1 == 0) {
             player.cdSkill1 = player.MAX_CD_1;
             soundEffect.playSE(2);
-
             int px = player.getX() + PLAYER_SIZE/2;
             int py = player.getY() + PLAYER_SIZE/2;
             int radius = 250;
-
-            // BARU: Spawn Visual Effect "BLAST" agar terlihat ledakannya
             visualEffects.add(new VisualEffect(px - 100, py - 100, "BLAST", 40));
 
-            // Logic membunuh musuh
             for (int i = 0; i < enemies.size(); i++) {
                 Enemy e = enemies.get(i);
                 int ex = e.getX() + ENEMY_SIZE/2;
                 int ey = e.getY() + ENEMY_SIZE/2;
                 double dist = Math.sqrt(Math.pow(px-ex, 2) + Math.pow(py-ey, 2));
-
                 if (dist < radius) {
                     spawnExplosionParticles(e.getX(), e.getY(), Color.RED);
                     visualEffects.add(new VisualEffect(e.getX(), e.getY(), "HIT", 30));
@@ -223,24 +216,18 @@ public class GamePresenter {
         }
     }
 
-    // SKILL 2: MULTISHOT
     public void activateSkill2() {
         if (player.cdSkill2 == 0) {
             player.cdSkill2 = player.MAX_CD_2;
-            player.durationSkill2 = 300; // 5 Detik
-
-            // BARU: Visual Effect "BUFF" di atas kepala player
+            player.durationSkill2 = 300;
             visualEffects.add(new VisualEffect(player.getX(), player.getY() - 40, "BUFF", 60));
         }
     }
 
-    // SKILL 3: SHIELD
     public void activateSkill3() {
         if (player.cdSkill3 == 0) {
             player.cdSkill3 = player.MAX_CD_3;
             player.durationSkill3 = 180;
-
-            // BARU: Visual Effect "SHIELD"
             visualEffects.add(new VisualEffect(player.getX(), player.getY(), "SHIELD", 60));
         }
     }
@@ -249,7 +236,6 @@ public class GamePresenter {
         player.activateDash();
     }
 
-    // --- UTILS ---
     private void shootEnemyBullet(Enemy e) {
         int targetX = player.getX() + PLAYER_SIZE/2;
         int targetY = player.getY() + PLAYER_SIZE/2;
@@ -270,13 +256,12 @@ public class GamePresenter {
         DBConnection.saveScore(username, scoreKill, bulletsMissed, player.getAmmo());
     }
 
-    // Getters
     public Player getPlayer() { return player; }
     public ArrayList<Enemy> getEnemies() { return enemies; }
     public ArrayList<Obstacle> getObstacles() { return obstacles; }
     public ArrayList<Bullet> getBullets() { return bullets; }
     public ArrayList<Particle> getParticles() { return particles; }
-    public ArrayList<VisualEffect> getVisualEffects() { return visualEffects; } // Getter baru
+    public ArrayList<VisualEffect> getVisualEffects() { return visualEffects; }
     public boolean isGameOver() { return isGameOver; }
     public int getScore() { return scoreKill; }
     public String getUsername() { return username; }

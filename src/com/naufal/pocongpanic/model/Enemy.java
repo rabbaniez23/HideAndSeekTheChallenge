@@ -1,12 +1,12 @@
 package com.naufal.pocongpanic.model;
 
 import java.awt.Rectangle;
+import java.util.ArrayList;
 
 public class Enemy {
     private int x, y;
-    private int speed = 2;
+    private int speed = 1; // Kecepatan musuh (pelan biar zombie-like)
 
-    // Timer agar musuh tidak menembak terus menerus
     public int shootTimer = 0;
 
     // Animasi
@@ -16,23 +16,51 @@ public class Enemy {
     public Enemy(int startX, int startY) {
         this.x = startX;
         this.y = startY;
-
-        // BARU: Random start agar musuh tidak menembak barengan saat baru spawn
         this.shootTimer = (int)(Math.random() * 100);
     }
 
-    // Logika Musuh
-    public void update(int playerX, int playerY) {
-        // 1. Gerak pelan mendekati player
-        if (x < playerX) x += 1;
-        if (x > playerX) x -= 1;
-        if (y < playerY) y += 1;
-        if (y > playerY) y -= 1;
+    // UPDATE: Menerima list obstacle untuk cek tabrakan
+    public void update(int playerX, int playerY, ArrayList<Obstacle> obstacles) {
+        int dx = 0;
+        int dy = 0;
 
-        // 2. Hitung waktu nembak
+        // Tentukan arah gerak (Mengejar Player)
+        if (x < playerX) dx = speed;
+        else if (x > playerX) dx = -speed;
+
+        if (y < playerY) dy = speed;
+        else if (y > playerY) dy = -speed;
+
+        // --- GERAK SUMBU X ---
+        x += dx;
+        // Cek apakah nabrak obstacle?
+        Rectangle myBoundsX = getBounds();
+        boolean hitX = false;
+        for (Obstacle obs : obstacles) {
+            if (myBoundsX.intersects(obs.getBounds())) {
+                hitX = true;
+                break;
+            }
+        }
+        if (hitX) x -= dx; // Kalau nabrak, batalkan gerak X
+
+        // --- GERAK SUMBU Y ---
+        y += dy;
+        // Cek apakah nabrak obstacle?
+        Rectangle myBoundsY = getBounds();
+        boolean hitY = false;
+        for (Obstacle obs : obstacles) {
+            if (myBoundsY.intersects(obs.getBounds())) {
+                hitY = true;
+                break;
+            }
+        }
+        if (hitY) y -= dy; // Kalau nabrak, batalkan gerak Y
+
+
+        // --- LOGIKA SHOOT & ANIMASI ---
         shootTimer++;
 
-        // 3. Animasi
         spriteCounter++;
         if(spriteCounter > 12) {
             spriteNum++;
@@ -41,9 +69,7 @@ public class Enemy {
         }
     }
 
-    // Cek apakah musuh siap nembak?
     public boolean readyToShoot() {
-        // BARU: Diperlambat jadi 180 (3 detik) agar Level 1 tidak terlalu chaos
         if (shootTimer >= 180) {
             shootTimer = 0;
             return true;
@@ -54,7 +80,8 @@ public class Enemy {
     public int getX() { return x; }
     public int getY() { return y; }
 
+    // Hitbox Musuh (Sedikit lebih kecil dari gambar agar tidak kaku)
     public Rectangle getBounds() {
-        return new Rectangle(x, y, 40, 40);
+        return new Rectangle(x + 10, y + 10, 60, 60); // Asumsi gambar 84x84
     }
 }
