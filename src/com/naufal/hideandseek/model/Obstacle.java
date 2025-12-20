@@ -27,8 +27,6 @@ public class Obstacle {
     /**
      * getBounds()
      * Membuat kotak imajiner (Hitbox) untuk deteksi tabrakan.
-     * Angka +15 dan -30 digunakan agar hitbox sedikit lebih kecil dari gambar aslinya,
-     * supaya pemain tidak merasa 'tersangkut' padahal belum menyentuh gambar secara visual.
      */
     public Rectangle getBounds() {
         return new Rectangle(x + 15, y + 20, width - 30, height - 30);

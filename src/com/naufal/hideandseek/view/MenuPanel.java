@@ -113,8 +113,8 @@ public class MenuPanel extends JPanel {
         scoreTable.setIntercellSpacing(new Dimension(0, 0)); // Rapatkan sel
         scoreTable.setFillsViewportHeight(true);
 
-        // --- SETTING ANTI BUG TABEL ---
-        // Tabel dibuat OPAQUE (Solid) agar background tergambar sempurna tanpa glitch
+
+        // Tabel dibuat
         scoreTable.setOpaque(true);
         scoreTable.setBackground(colorTableBg); // Warna dasar gelap solid
 

@@ -13,7 +13,7 @@ import java.util.Random;
  * Tugasnya:
  * 1. Mengelola update logika game setiap frame.
  * 2. Mengatur interaksi antara Pemain, Musuh, dan Peluru.
- * 3. Menghitung skor dan menangani kondisi menang/kalah.
+ * 3. Menghitung skor dan menangani kondisi game selesai
  */
 public class GamePresenter {
     // --- MODELS (Data Game) ---
@@ -155,7 +155,7 @@ public class GamePresenter {
             }
         }
 
-        // 4. Update Peluru (Logika paling rumit)
+        // 4. Update Peluru 
         for (int i = 0; i < bullets.size(); i++) {
             Bullet b = bullets.get(i);
             b.update(); // Gerakkan peluru

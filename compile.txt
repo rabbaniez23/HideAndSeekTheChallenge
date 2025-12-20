@@ -1,0 +1,13 @@
+how to compile
+
+1   mkdir bin
+
+2   javac -d bin -cp "lib/mysql-connector-j-9.3.0.jar" ^
+      src/com/naufal/hideandseek/Main.java ^
+      src/com/naufal/hideandseek/model/*.java ^
+      src/com/naufal/hideandseek/view/*.java ^
+      src/com/naufal/hideandseek/presenter/*.java
+
+3   xcopy src\assets bin\assets /E /I /Y
+
+4   java -cp "bin;lib/mysql-connector-j-9.5.0.jar" com.naufal.hideandseek.Main
